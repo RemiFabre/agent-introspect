@@ -19,6 +19,17 @@ Related: [anthropics/claude-code#34879](https://github.com/anthropics/claude-cod
 
 A Claude Code hook that runs after each tool call and warns the agent when context exceeds a threshold (e.g., 70%). Could inject a system reminder like "Context at 75% — consider wrapping up."
 
+## Usage Limit Recovery (Auto-Restart)
+
+When an agent hits 100% usage, the Claude Code session freezes — the agent can't do anything until the limit resets. The agent itself can't recover from this because it can't execute any code.
+
+Solution: an external watchdog script that:
+- Periodically checks usage via `introspection/usage.py --json`
+- When it detects limits have refreshed (usage drops below a threshold), sends a message to the iTerm window to resume work
+- Could also detect a frozen session (no transcript changes for N minutes while usage is at 100%) and automatically restart the loop with `launch_loop.sh`
+
+This would make loops truly autonomous — they scale down near limits, and if they accidentally hit 100%, the watchdog brings them back.
+
 ## Loop Health Monitor
 
 A background process that watches a running ralph-loop and detects when it's stuck:

@@ -30,16 +30,14 @@ Lessons learned from debugging loops that wasted 93% of iterations:
 
 ### Do
 
-- **Track usage to tune intensity.** Use `introspection/usage.py --json` to check plan limits and adjust how many sub-agents to spawn. A master agent should allocate budget across workers based on remaining quota and reset timing
-- **Set a completion promise.** Give the agent a way to cleanly stop: `--completion-promise PAUSE_FOR_RESTART`
+- **Track usage to tune intensity.** Use `introspection/usage.py --json` to check plan limits and adjust how many sub-agents to spawn. The goal is to use as much of the plan as possible without hitting 100%. Scale workers up when there's budget, scale down when it's tight
 - **Explain the loop mechanics.** Tell the agent it's in a continuous session with no resets
 - **Keep responses minimal.** Tell the agent context accumulates — don't write essays
-- **Have the loop auto-stop and relaunch with fresh context.** When context gets heavy, the agent outputs the completion promise. An outer script detects this and relaunches with `launch_loop.sh`, giving a fresh context window while the cursor file preserves progress
+- **Persist progress to disk.** Use a cursor file or similar so work survives if the session dies
 
 ### Don't
 
 - **Don't tell the agent to "wait for session restart".** There are no resets — the agent will output "Holding" forever and waste thousands of iterations
-- **Don't skip the completion promise.** Without one, the only exit is max_iterations or killing the window
 - **Don't let the agent output verbose status updates.** Every token accumulates in context. "Cursor: 500/9834" is fine. A paragraph is not
 
 ## iTerm Window Targeting
