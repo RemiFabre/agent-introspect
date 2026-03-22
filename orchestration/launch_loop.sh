@@ -60,11 +60,11 @@ send_to_window "cd $PROJECT_DIR && ANTHROPIC_API_KEY='' claude --dangerously-ski
 echo "  Sent claude command, waiting 3s for init..."
 sleep 3
 
-# 3. Write window ID to file so the agent can self-restart
-#    The agent reads this to know which window to close when spawning a replacement
+# 3. Append window ID to file so the agent can self-restart
+#    Each launch appends — the agent's own ID is always the last line
 WINDOW_ID_FILE="$WORK_DIR/.claude/window_id"
 mkdir -p "$(dirname "$WINDOW_ID_FILE")"
-echo "$WIN_ID" > "$WINDOW_ID_FILE"
+echo "$WIN_ID" >> "$WINDOW_ID_FILE"
 echo "  Window ID written to: $WINDOW_ID_FILE"
 
 # 4. Send /ralph-loop command
