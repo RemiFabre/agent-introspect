@@ -40,6 +40,27 @@ Starts a [Ralph Loop](https://github.com/anthropics/claude-code-plugins) session
 bash orchestration/launch_loop.sh /path/to/project "read CLAUDE.md and follow instructions" 100
 ```
 
+### `introspection/search_sessions.py` — Search Past Sessions
+
+Searches Claude Code conversation history for keywords. Returns compact, token-efficient output (session ID, project, date, match count) — no large text dumps. Agents should use this instead of manually grepping JSONL files.
+
+```bash
+# Quick search
+python3 introspection/search_sessions.py "set_full_target"
+
+# OR logic (match any keyword)
+python3 introspection/search_sessions.py --any "set_full_target" "224-batch"
+
+# User messages only (fastest — searches history.jsonl)
+python3 introspection/search_sessions.py --history-only "deploy script"
+
+# With context snippets
+python3 introspection/search_sessions.py --snippets "breathing"
+
+# Filter by project, exclude current session, JSON output
+python3 introspection/search_sessions.py --project "reachy-mini" --exclude c4ab --json "target"
+```
+
 ### `analysis/session_analyzer.py` — Analyze Loop Efficiency
 
 Reads Claude Code JSONL session transcripts and reports how many iterations were productive vs wasted. Useful for debugging autonomous loops that get stuck.
